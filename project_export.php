@@ -1,4 +1,3 @@
-
 <?php
 session_start();
 require_once 'database.php';
@@ -137,4 +136,3 @@ function deleteDirectory($dir) {
 
 deleteDirectory($temp_dir);
 exit;
-?>
