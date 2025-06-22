@@ -1521,6 +1521,12 @@ if __name__ == "__main__":
     }
   }
 
+  // Show message if requested paste does not exist
+  if (isset($_GET['id']) && !$paste) {
+    include 'missing_paste_message.php';
+    exit;
+  }
+
   // Get user's pastes for dashboard
   $user_pastes = [];
   $favorite_pastes = [];
