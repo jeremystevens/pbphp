@@ -7042,6 +7042,7 @@ plt.show()</code></pre>
                   <label class="block text-sm font-medium mb-1">Expiration:</label>
                   <select name="expire" class="w-full p-2 rounded border dark:bg-gray-700 dark:border-gray-600">
                     <option value="never">Never</option>
+                    <option value="180">3 minutes</option>
                     <option value="600">10 minutes</option>
                     <option value="3600">1 hour</option>
                     <option value="86400">1 day</option>
