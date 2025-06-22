@@ -521,6 +521,19 @@ $theme = $_COOKIE['theme'] ?? 'dark';
         .prose p {
             margin: 0;
         }
+        .modal-dialog {
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-content {
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        @media (max-height: 700px) {
+            .modal-dialog {
+                height: 95vh;
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white">
@@ -1221,8 +1234,8 @@ $theme = $_COOKIE['theme'] ?? 'dark';
 <!-- Add File Modal -->
 <div id="addFileModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
     <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-white dark:bg-gray-800 rounded-lg max-w-2xl w-full max-h-[90vh] flex flex-col">
-<form method="POST" action="?action=add_file&project_id=<?= $project_id ?>" class="space-y-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg max-w-2xl w-full flex flex-col modal-dialog">
+<form method="POST" action="?action=add_file&project_id=<?= $project_id ?>" class="space-y-4 modal-content">
                 <div class="p-6 border-b border-gray-200 dark:border-gray-700">
                     <h3 class="text-xl font-semibold">Add File to Project</h3>
                 </div>
