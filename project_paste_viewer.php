@@ -3,7 +3,7 @@
 session_start();
 require_once 'database.php';
 require_once 'related_pastes_helper.php';
-require_once 'utility.php';
+//require_once 'utility.php';
 
 if (!isset($_GET['id'])) {
     header('Location: /');
