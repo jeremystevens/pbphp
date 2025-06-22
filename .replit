@@ -1,4 +1,8 @@
-modules = ["php-8.2", "bash", "nix"]
+modules = ["php-8.2", "bash"]
+run = "php -S 0.0.0.0:3000"
 
 [nix]
 channel = "stable-24_05"
+
+[deployment]
+run = ["sh", "-c", "php -S 0.0.0.0:3000"]
