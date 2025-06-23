@@ -28,6 +28,7 @@ if (isset($_SESSION['user_id'])) {
 }
 
 $theme = $_COOKIE['theme'] ?? 'dark';
+$user_id = $_SESSION['user_id'] ?? null;
 
 include 'header.php';
 ?>
