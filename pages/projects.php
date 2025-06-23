@@ -28,17 +28,9 @@ if (isset($_SESSION['user_id'])) {
 }
 
 $theme = $_COOKIE['theme'] ?? 'dark';
+
+include 'header.php';
 ?>
-<!DOCTYPE html>
-<html class="<?= $theme ?>">
-<head>
-    <title>Projects</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <script>tailwind.config = { darkMode: 'class' }</script>
-</head>
-<body class="bg-gray-900 text-white">
     <div class="max-w-6xl mx-auto p-6">
         <?php if (!empty($my_projects)): ?>
             <h2 class="text-2xl font-bold mb-4">My Projects</h2>
@@ -94,5 +86,4 @@ $theme = $_COOKIE['theme'] ?? 'dark';
             <?php endforeach; ?>
         </div>
     </div>
-</body>
-</html>
+<?php include 'footer.php'; ?>
