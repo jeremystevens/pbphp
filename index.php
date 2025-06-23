@@ -162,6 +162,16 @@ function human_time_diff($timestamp) {
     return $years . ' year' . ($years > 1 ? 's' : '') . ' ago';
 }
 
+function timeAgo($timestamp) {
+    $diff = time() - $timestamp;
+    if ($diff < 60) return 'just now';
+    if ($diff < 3600) return floor($diff / 60) . ' minutes ago';
+    if ($diff < 86400) return floor($diff / 3600) . ' hours ago';
+    if ($diff < 2592000) return floor($diff / 86400) . ' days ago';
+    if ($diff < 31536000) return floor($diff / 2592000) . ' months ago';
+    return floor($diff / 31536000) . ' years ago';
+}
+
 // Build pagination URLs with current filter parameters
 function buildPaginationUrl($page) {
     $params = $_GET;
@@ -1879,18 +1889,17 @@ $theme = $_COOKIE['theme'] ?? 'dark';
 </head>
 <body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
   <!-- Modern Navigation Bar -->
-  <nav class="bg-blue-600 dark:bg-blue-800 text-white shadow-lg fixed w-full z-10">
-    <div class="max-w-7xl mx-auto px-4">
-      <div class="flex justify-between h-16">
-        <div class="flex items-center space-x-6">
+  <nav class="sticky top-0 z-50 bg-blue-800 text-white shadow-md">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center space-x-6">
           <a href="/" class="flex items-center space-x-3">
             <i class="fas fa-paste text-2xl"></i>
             <span class="text-xl font-bold">PasteForge</span>
           </a>
-          <div class="flex space-x-4">
-            <a href="/" class="hover:bg-blue-700 px-3 py-2 rounded">Home</a>
-            <a href="?page=archive" class="hover:bg-blue-700 px-3 py-2 rounded">Archive</a>
-            <a href="/?page=projects" class="hover:bg-blue-700 px-3 py-2 rounded">Projects</a>
+            <div class="hidden md:flex space-x-4">
+              <a href="?page=home" class="hover:bg-blue-700 px-3 py-2 rounded">Home</a>
+              <a href="?page=archive" class="hover:bg-blue-700 px-3 py-2 rounded">Archive</a>
+              <a href="?page=projects" class="hover:bg-blue-700 px-3 py-2 rounded">Projects</a>
             <?php if ($user_id): ?>
               <a href="?page=collections" class="hover:bg-blue-700 px-3 py-2 rounded">Collections</a>
             <?php else: ?>
@@ -2002,7 +2011,6 @@ $theme = $_COOKIE['theme'] ?? 'dark';
           <?php endif; ?>
         </div>
       </div>
-    </div>
   </nav>
 
   <!-- Main Content with Sidebar -->
@@ -6294,49 +6302,30 @@ plt.show()</code></pre>
                 <?php else: ?>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   <?php foreach ($archive_pastes as $paste): ?>
-                    <a href="?id=<?= $paste['id'] ?>" class="block rounded-md border border-gray-700 bg-gray-800 p-4 hover:shadow-lg hover:border-blue-500 transition duration-200" role="link" aria-label="View paste <?= htmlspecialchars($paste['title'] ?: 'Untitled') ?>">
-                      <div class="flex justify-between text-sm text-gray-400 mb-2">
-                        <span><?= htmlspecialchars($paste['language']) ?></span>
-                        <span><?= human_time_diff($paste['created_at']) ?></span>
-                      </div>
-                      <h2 class="text-white font-semibold text-lg truncate"><?= htmlspecialchars($paste['title'] ?: 'Untitled') ?></h2>
+                    <a href="?id=<?= $paste['id'] ?>" class="block bg-gray-800 hover:bg-gray-700 transition-all duration-200 rounded-lg p-4 shadow-md cursor-pointer">
+                      <p class="text-xs text-gray-400"><?= htmlspecialchars($paste['language']) ?></p>
+                      <h2 class="text-white text-lg font-semibold truncate"><?= htmlspecialchars($paste['title'] ?: 'Untitled') ?></h2>
+                      <p class="text-xs text-gray-500 mt-1"><?= timeAgo($paste['created_at']) ?></p>
                     </a>
                   <?php endforeach; ?>
                 </div>
                 <?php endif; ?>
-              
+
                 <?php if ($total_pages > 1): ?>
-                <div class="mt-6 flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
-                  <!-- Results info -->
-                  <div class="text-sm text-gray-600 dark:text-gray-400">
-                    Showing <?= number_format(($current_page - 1) * $items_per_page + 1) ?> -
-                    <?= number_format(min($current_page * $items_per_page, $total_count)) ?>
-                    of <?= number_format($total_count) ?> results
-                  </div>
-
-                  <!-- Pagination -->
-                  <div class="flex space-x-2">
-                    <?php if ($current_page > 1): ?>
-                      <a href="<?= buildPaginationUrl($current_page - 1) ?>"
-                         class="px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200 dark:hover:bg-gray-600">
-                        <i class="fas fa-chevron-left mr-1"></i>Previous
-                      </a>
+                <div class="flex justify-center mt-8 space-x-2">
+                  <?php if ($current_page > 1): ?>
+                    <a href="<?= buildPaginationUrl($current_page - 1) ?>" class="px-3 py-1 rounded bg-gray-700 text-white hover:bg-blue-600">&larr;</a>
+                  <?php endif; ?>
+                  <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                    <?php if ($i === $current_page): ?>
+                      <span class="px-3 py-1 rounded bg-blue-600 text-white"><?= $i ?></span>
+                    <?php else: ?>
+                      <a href="<?= buildPaginationUrl($i) ?>" class="px-3 py-1 rounded bg-gray-700 text-white hover:bg-blue-600"><?= $i ?></a>
                     <?php endif; ?>
-
-                    <?php for ($i = max(1, $current_page - 2); $i <= min($total_pages, $current_page + 2); $i++): ?>
-                      <a href="<?= buildPaginationUrl($i) ?>"
-                         class="px-4 py-2 rounded <?= $i === $current_page ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600' ?>">
-                        <?= $i ?>
-                      </a>
-                    <?php endfor; ?>
-
-                    <?php if ($current_page < $total_pages): ?>
-                      <a href="<?= buildPaginationUrl($current_page + 1) ?>"
-                         class="px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200 dark:hover:bg-gray-600">
-                        Next<i class="fas fa-chevron-right ml-1"></i>
-                      </a>
-                    <?php endif; ?>
-                  </div>
+                  <?php endfor; ?>
+                  <?php if ($current_page < $total_pages): ?>
+                    <a href="<?= buildPaginationUrl($current_page + 1) ?>" class="px-3 py-1 rounded bg-gray-700 text-white hover:bg-blue-600">&rarr;</a>
+                  <?php endif; ?>
                 </div>
                 <?php endif; ?>
               </div>
