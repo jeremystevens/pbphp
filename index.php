@@ -6291,13 +6291,14 @@ plt.show()</code></pre>
                       <th class="px-4 py-2 text-left">Language</th>
                       <th class="px-4 py-2 text-left">Posted</th>
                       <th class="px-4 py-2 text-left">Views</th>
+                      <th class="px-4 py-2 text-left">Comments</th>
                       <th class="px-4 py-2 text-left">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     <?php if (empty($archive_pastes)): ?>
                       <tr>
-                        <td colspan="6" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+                        <td colspan="7" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
                           <i class="fas fa-search text-4xl mb-4"></i>
                           <p class="text-lg">No pastes found matching your criteria.</p>
                           <p class="text-sm">Try adjusting your search filters or 
@@ -6371,23 +6372,17 @@ plt.show()</code></pre>
                           </div>
                         </td>
 
-                        <td class="px-4 py-3">
-                          <div class="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400">
-                            <i class="fas fa-eye"></i>
-                            <span><?= number_format($paste['views']) ?></span>
-                            <?php if ($paste['comment_count'] > 0): ?>
-                              <span class="ml-2">
-                                <i class="fas fa-comment"></i>
-                                <?= number_format($paste['comment_count']) ?>
-                              </span>
-                            <?php endif; ?>
-                            <?php if ($paste['fork_count'] > 0): ?>
-                              <span class="ml-2">
-                                <i class="fas fa-code-branch"></i>
-                                <?= number_format($paste['fork_count']) ?>
-                              </span>
-                            <?php endif; ?>
-                          </div>
+                        <td class="px-4 py-3 text-center text-sm text-gray-600 dark:text-gray-400">
+                          <i class="fas fa-eye mr-1 text-blue-400"></i><?= number_format($paste['views']) ?>
+                          <?php if ($paste['fork_count'] > 0): ?>
+                            <span class="ml-2">
+                              <i class="fas fa-code-branch"></i>
+                              <?= number_format($paste['fork_count']) ?>
+                            </span>
+                          <?php endif; ?>
+                        </td>
+                        <td class="px-4 py-3 text-center text-sm text-gray-600 dark:text-gray-400">
+                          <i class="fas fa-comment mr-1 text-gray-400"></i><?= number_format($paste['comment_count']) ?>
                         </td>
 
                         <td class="px-4 py-3">
@@ -6408,7 +6403,7 @@ plt.show()</code></pre>
                       <!-- Hidden row for children -->
                       <?php if ($has_children): ?>
                       <tr id="children-<?= $paste['id'] ?>" class="hidden">
-                        <td colspan="6" class="px-0 py-0">
+                        <td colspan="7" class="px-0 py-0">
                           <div class="bg-gray-50 dark:bg-gray-800 border-l-4 border-blue-500">
                             <div id="children-content-<?= $paste['id'] ?>" class="p-4">
                               <!-- Children will be loaded here via AJAX -->
