@@ -6011,115 +6011,6 @@ plt.show()</code></pre>
           <?php if (!isset($_GET['page']) || ($_GET['page'] !== 'login' && $_GET['page'] !== 'signup')): ?>
           <?php if (isset($_GET['page']) && $_GET['page'] === 'archive'): ?>
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-              <h2 class="text-2xl font-bold mb-6">
-                <i class="fas fa-archive mr-2"></i>Global Search & Archive
-              </h2>
-
-              <!-- Sleek Search Section -->
-              <div class="mb-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
-                <form method="GET" id="searchForm">
-                  <input type="hidden" name="page" value="archive">
-
-                  <!-- Main Search Row -->
-                  <div class="flex flex-col lg:flex-row gap-3">
-                    <!-- Search Input -->
-                    <div class="flex-1">
-                      <div class="relative">
-                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                        <input type="text" 
-                               name="search" 
-                               value="<?= htmlspecialchars($_GET['search'] ?? '') ?>"
-                               placeholder="Search pastes, content, or tags..."
-                               class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                      </div>
-                    </div>
-
-                    <!-- Language Filter -->
-                    <div class="min-w-0 lg:w-40">
-                      <select name="language" class="w-full px-3 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm focus:ring-2 focus:ring-blue-500">
-                        <option value="">All Languages</option>
-                        <?php
-                        $lang_stmt = $db->query("SELECT DISTINCT language FROM pastes WHERE is_public = 1 AND zero_knowledge = 0 AND (expire_time IS NULL OR expire_time > " . time() . ") ORDER BY language");
-                        $languages = $lang_stmt->fetchAll(PDO::FETCH_COLUMN);
-                        foreach ($languages as $lang):
-                        ?>
-                          <option value="<?= htmlspecialchars($lang) ?>" <?= ($_GET['language'] ?? '') === $lang ? 'selected' : '' ?>>
-                            <?= htmlspecialchars(ucfirst($lang)) ?>
-                          </option>
-                        <?php endforeach; ?>
-                      </select>
-                    </div>
-
-                    <!-- Sort Filter -->
-                    <div class="min-w-0 lg:w-36">
-                      <select name="sort_by" class="w-full px-3 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm focus:ring-2 focus:ring-blue-500">
-                        <option value="created_at_desc" <?= ($_GET['sort_by'] ?? 'created_at_desc') === 'created_at_desc' ? 'selected' : '' ?>>Newest</option>
-                        <option value="views_desc" <?= ($_GET['sort_by'] ?? '') === 'views_desc' ? 'selected' : '' ?>>Popular</option>
-                        <option value="created_at_asc" <?= ($_GET['sort_by'] ?? '') === 'created_at_asc' ? 'selected' : '' ?>>Oldest</option>
-                        <option value="title_asc" <?= ($_GET['sort_by'] ?? '') === 'title_asc' ? 'selected' : '' ?>>A-Z</option>
-                      </select>
-                    </div>
-
-                    <!-- Search Button -->
-                    <button type="submit" class="px-6 py-2.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center">
-                      <i class="fas fa-search lg:mr-2"></i>
-                      <span class="hidden lg:inline">Search</span>
-                    </button>
-
-                    <!-- Advanced Toggle -->
-                    <button type="button" onclick="toggleAdvancedFilters()" class="px-3 py-2.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                      <i class="fas fa-sliders-h"></i>
-                    </button>
-                  </div>
-
-                  <!-- Advanced Filters (Hidden by default) -->
-                  <div id="advancedFilters" class="hidden mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-                      <div>
-                        <input type="text" 
-                               name="user" 
-                               value="<?= htmlspecialchars($_GET['user'] ?? '') ?>"
-                               placeholder="Author username..."
-                               class="w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm">
-                      </div>
-                      <div>
-                        <input type="text" 
-                               name="tags" 
-                               value="<?= htmlspecialchars($_GET['tags'] ?? '') ?>"
-                               placeholder="Tags (comma separated)..."
-                               class="w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm">
-                      </div>
-                      <div>
-                        <input type="date" 
-                               name="date_from" 
-                               value="<?= htmlspecialchars($_GET['date_from'] ?? '') ?>"
-                               class="w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm">
-                      </div>
-                      <div>
-                        <input type="date" 
-                               name="date_to" 
-                               value="<?= htmlspecialchars($_GET['date_to'] ?? '') ?>"
-                               class="w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm">
-                      </div>
-                    </div>
-                    <div class="mt-3 flex gap-2">
-                      <a href="?page=archive" class="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">
-                        Clear All Filters
-                      </a>
-                    </div>
-                  </div>
-                </form>
-
-                <!-- Quick Filter Pills (More Compact) -->
-                <?php if (empty($_GET['search']) && empty($_GET['language']) && empty($_GET['user'])): ?>
-                <div class="mt-3 flex flex-wrap gap-2">
-                  <button onclick="quickFilter('language', 'javascript')" class="px-3 py-1 bg-yellow-50 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 rounded-full text-xs hover:bg-yellow-100 dark:hover:bg-yellow-900/50 transition-colors">JavaScript</button>
-                  <button onclick="quickFilter('language', 'python')" class="px-3 py-1 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full text-xs hover:bg-green-100 dark:hover:bg-green-900/50 transition-colors">Python</button>
-                  <button onclick="quickFilter('language', 'php')" class="px-3 py-1 bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full text-xs hover:bg-purple-100 dark:hover:bg-purple-900/50 transition-colors">PHP</button>
-                  <button onclick="quickFilter('sort_by', 'views_desc')" class="px-3 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-xs hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors">Popular</button>
-                </div>
-                <?php endif; ?>
-              </div>
 
               <!-- Search Results Summary -->
               <?php
@@ -6292,9 +6183,9 @@ plt.show()</code></pre>
                     </p>
                   </div>
                 <?php else: ?>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   <?php foreach ($archive_pastes as $paste): ?>
-                    <a href="?id=<?= $paste['id'] ?>" class="block rounded-md border border-gray-700 bg-gray-800 p-4 hover:shadow-lg hover:border-blue-500 transition duration-200" role="link" aria-label="View paste <?= htmlspecialchars($paste['title'] ?: 'Untitled') ?>">
+                    <a href="?id=<?= $paste['id'] ?>" class="block bg-gray-800 hover:bg-gray-700 rounded shadow-sm p-4 transition duration-200" role="link" aria-label="View paste <?= htmlspecialchars($paste['title'] ?: 'Untitled') ?>">
                       <div class="flex justify-between text-sm text-gray-400 mb-2">
                         <span><?= htmlspecialchars($paste['language']) ?></span>
                         <span><?= human_time_diff($paste['created_at']) ?></span>
@@ -6305,23 +6196,15 @@ plt.show()</code></pre>
                 </div>
                 <?php endif; ?>
               
-                <?php if ($total_pages > 1): ?>
-                <div class="mt-6 flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
-                  <!-- Results info -->
-                  <div class="text-sm text-gray-600 dark:text-gray-400">
-                    Showing <?= number_format(($current_page - 1) * $items_per_page + 1) ?> -
-                    <?= number_format(min($current_page * $items_per_page, $total_count)) ?>
-                    of <?= number_format($total_count) ?> results
-                  </div>
-
-                  <!-- Pagination -->
-                  <div class="flex space-x-2">
-                    <?php if ($current_page > 1): ?>
-                      <a href="<?= buildPaginationUrl($current_page - 1) ?>"
-                         class="px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200 dark:hover:bg-gray-600">
-                        <i class="fas fa-chevron-left mr-1"></i>Previous
-                      </a>
-                    <?php endif; ?>
+                  <?php if ($total_pages > 1): ?>
+                  <div class="mt-6 flex justify-center">
+                    <div class="flex space-x-2">
+                      <?php if ($current_page > 1): ?>
+                        <a href="<?= buildPaginationUrl($current_page - 1) ?>"
+                           class="px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200 dark:hover:bg-gray-600">
+                          <i class="fas fa-chevron-left mr-1"></i>Previous
+                        </a>
+                      <?php endif; ?>
 
                     <?php for ($i = max(1, $current_page - 2); $i <= min($total_pages, $current_page + 2); $i++): ?>
                       <a href="<?= buildPaginationUrl($i) ?>"
@@ -6330,15 +6213,15 @@ plt.show()</code></pre>
                       </a>
                     <?php endfor; ?>
 
-                    <?php if ($current_page < $total_pages): ?>
-                      <a href="<?= buildPaginationUrl($current_page + 1) ?>"
-                         class="px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200 dark:hover:bg-gray-600">
-                        Next<i class="fas fa-chevron-right ml-1"></i>
-                      </a>
-                    <?php endif; ?>
+                      <?php if ($current_page < $total_pages): ?>
+                        <a href="<?= buildPaginationUrl($current_page + 1) ?>"
+                           class="px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200 dark:hover:bg-gray-600">
+                          Next<i class="fas fa-chevron-right ml-1"></i>
+                        </a>
+                      <?php endif; ?>
+                    </div>
                   </div>
-                </div>
-                <?php endif; ?>
+                  <?php endif; ?>
               </div>
 
 
@@ -6379,9 +6262,12 @@ plt.show()</code></pre>
                 }
 
                 // Auto-submit search form on sort change
-                document.querySelector('select[name="sort_by"]').addEventListener('change', function() {
-                  document.getElementById('searchForm').submit();
-                });
+                const sortSelect = document.querySelector('select[name="sort_by"]');
+                if (sortSelect) {
+                  sortSelect.addEventListener('change', function() {
+                    document.getElementById('searchForm').submit();
+                  });
+                }
 
                 // Search suggestions for user input
                 const userInput = document.querySelector('input[name="user"]');
@@ -6405,13 +6291,16 @@ plt.show()</code></pre>
 
                 // Real-time search (optional)
                 let realTimeSearchTimeout;
-                document.querySelector('input[name="search"]').addEventListener('input', function() {
-                  clearTimeout(realTimeSearchTimeout);
-                  realTimeSearchTimeout = setTimeout(() => {
-                    // Optional: implement real-time search
-                    // document.getElementById('searchForm').submit();
-                  }, 1000);
-                });
+                const searchInput = document.querySelector('input[name="search"]');
+                if (searchInput) {
+                  searchInput.addEventListener('input', function() {
+                    clearTimeout(realTimeSearchTimeout);
+                    realTimeSearchTimeout = setTimeout(() => {
+                      // Optional: implement real-time search
+                      // document.getElementById('searchForm').submit();
+                    }, 1000);
+                  });
+                }
 
                 function toggleChildren(parentId) {
                   const childrenRow = document.getElementById(`children-${parentId}`);
