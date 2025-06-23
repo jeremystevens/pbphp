@@ -10,12 +10,29 @@ $theme = $_COOKIE['theme'] ?? 'dark';
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script>
-        tailwind.config = {
-            darkMode: 'class'
+        tailwind.config = { darkMode: 'class' };
+        function initTheme() {
+            const stored = localStorage.getItem('theme');
+            if (stored) {
+                document.documentElement.classList.remove('light', 'dark');
+                document.documentElement.classList.add(stored);
+            }
         }
+        function toggleTheme() {
+            const html = document.documentElement;
+            const newTheme = html.classList.contains('dark') ? 'light' : 'dark';
+            html.classList.remove('dark', 'light');
+            html.classList.add(newTheme);
+            localStorage.setItem('theme', newTheme);
+            document.cookie = `theme=${newTheme};path=/`;
+        }
+        document.addEventListener('DOMContentLoaded', initTheme);
     </script>
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen">
+    <button onclick="toggleTheme()" class="absolute top-4 right-4 p-2 bg-blue-600 text-white rounded-full shadow sm:top-6 sm:right-6 hover:bg-blue-700">
+        <i class="fas fa-moon"></i>
+    </button>
     <div class="min-h-screen flex items-center justify-center p-4">
         <div class="max-w-lg mx-auto text-center">
             <div class="mb-8">
