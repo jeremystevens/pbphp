@@ -154,6 +154,7 @@ if (!$is_included): ?>
                     <a href="/?page=archive" class="hover:bg-blue-700 px-3 py-2 rounded">
                         <i class="fas fa-archive mr-2"></i>Archive
                     </a>
+                    <a href="/?page=projects" class="text-blue-600 dark:text-blue-400 hover:underline">Projects</a>
                     <a href="/?page=collections" class="hover:bg-blue-700 px-3 py-2 rounded">
                         <i class="fas fa-folder mr-2"></i>Collections
                     </a>
