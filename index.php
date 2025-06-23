@@ -1879,15 +1879,18 @@ $theme = $_COOKIE['theme'] ?? 'dark';
 </head>
 <body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
   <!-- Modern Navigation Bar -->
-  <nav class="bg-blue-600 dark:bg-blue-800 text-white shadow-lg fixed w-full z-10">
+  <nav x-data="{ open: false }" class="bg-blue-600 dark:bg-blue-800 text-white shadow-lg fixed w-full z-10">
     <div class="max-w-7xl mx-auto px-4">
-      <div class="flex justify-between h-16">
-        <div class="flex items-center space-x-6">
+      <div class="flex justify-between h-16 items-center">
+        <div class="flex items-center space-x-4">
           <a href="/" class="flex items-center space-x-3">
             <i class="fas fa-paste text-2xl"></i>
             <span class="text-xl font-bold">PasteForge</span>
           </a>
-          <div class="flex space-x-4">
+          <button @click="open = !open" class="md:hidden p-2 rounded hover:bg-blue-700 focus:outline-none">
+            <i class="fas fa-bars"></i>
+          </button>
+          <div class="hidden md:flex space-x-4 ml-4">
             <a href="/" class="hover:bg-blue-700 px-3 py-2 rounded">Home</a>
             <a href="?page=archive" class="hover:bg-blue-700 px-3 py-2 rounded">Archive</a>
             <a href="/?page=projects" class="hover:bg-blue-700 px-3 py-2 rounded">Projects</a>
@@ -2001,6 +2004,16 @@ $theme = $_COOKIE['theme'] ?? 'dark';
             </div>
           <?php endif; ?>
         </div>
+      </div>
+      <div x-show="open" class="md:hidden mt-2 space-y-1 pb-4">
+        <a href="/" class="block px-3 py-2 rounded hover:bg-blue-700">Home</a>
+        <a href="?page=archive" class="block px-3 py-2 rounded hover:bg-blue-700">Archive</a>
+        <a href="/?page=projects" class="block px-3 py-2 rounded hover:bg-blue-700">Projects</a>
+        <?php if ($user_id): ?>
+          <a href="?page=collections" class="block px-3 py-2 rounded hover:bg-blue-700">Collections</a>
+        <?php else: ?>
+          <a href="?page=about" class="block px-3 py-2 rounded hover:bg-blue-700">About</a>
+        <?php endif; ?>
       </div>
     </div>
   </nav>
@@ -6294,49 +6307,28 @@ plt.show()</code></pre>
                 <?php else: ?>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   <?php foreach ($archive_pastes as $paste): ?>
-                    <a href="?id=<?= $paste['id'] ?>" class="block rounded-md border border-gray-700 bg-gray-800 p-4 hover:shadow-lg hover:border-blue-500 transition duration-200" role="link" aria-label="View paste <?= htmlspecialchars($paste['title'] ?: 'Untitled') ?>">
+                    <a href="?id=<?= $paste['id'] ?>" class="block bg-gray-800 rounded-md p-4 hover:bg-gray-700 hover:shadow-lg transition-all duration-200 cursor-pointer" role="link" aria-label="View paste <?= htmlspecialchars($paste['title'] ?: 'Untitled') ?>">
                       <div class="flex justify-between text-sm text-gray-400 mb-2">
                         <span><?= htmlspecialchars($paste['language']) ?></span>
                         <span><?= human_time_diff($paste['created_at']) ?></span>
                       </div>
-                      <h2 class="text-white font-semibold text-lg truncate"><?= htmlspecialchars($paste['title'] ?: 'Untitled') ?></h2>
+                      <h2 class="text-white font-semibold text-lg mt-1 truncate"><?= htmlspecialchars($paste['title'] ?: 'Untitled') ?></h2>
                     </a>
                   <?php endforeach; ?>
                 </div>
                 <?php endif; ?>
-              
+
                 <?php if ($total_pages > 1): ?>
-                <div class="mt-6 flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
-                  <!-- Results info -->
-                  <div class="text-sm text-gray-600 dark:text-gray-400">
-                    Showing <?= number_format(($current_page - 1) * $items_per_page + 1) ?> -
-                    <?= number_format(min($current_page * $items_per_page, $total_count)) ?>
-                    of <?= number_format($total_count) ?> results
-                  </div>
-
-                  <!-- Pagination -->
-                  <div class="flex space-x-2">
-                    <?php if ($current_page > 1): ?>
-                      <a href="<?= buildPaginationUrl($current_page - 1) ?>"
-                         class="px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200 dark:hover:bg-gray-600">
-                        <i class="fas fa-chevron-left mr-1"></i>Previous
-                      </a>
-                    <?php endif; ?>
-
-                    <?php for ($i = max(1, $current_page - 2); $i <= min($total_pages, $current_page + 2); $i++): ?>
-                      <a href="<?= buildPaginationUrl($i) ?>"
-                         class="px-4 py-2 rounded <?= $i === $current_page ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600' ?>">
-                        <?= $i ?>
-                      </a>
-                    <?php endfor; ?>
-
-                    <?php if ($current_page < $total_pages): ?>
-                      <a href="<?= buildPaginationUrl($current_page + 1) ?>"
-                         class="px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200 dark:hover:bg-gray-600">
-                        Next<i class="fas fa-chevron-right ml-1"></i>
-                      </a>
-                    <?php endif; ?>
-                  </div>
+                <div class="flex justify-center mt-6 space-x-2">
+                  <?php if ($current_page > 1): ?>
+                    <a href="<?= buildPaginationUrl($current_page - 1) ?>" class="bg-gray-700 px-3 py-1 rounded text-white">&larr;</a>
+                  <?php endif; ?>
+                  <?php for ($i = max(1, $current_page - 2); $i <= min($total_pages, $current_page + 2); $i++): ?>
+                    <a href="<?= buildPaginationUrl($i) ?>" class="px-3 py-1 rounded text-white <?= $i === $current_page ? 'bg-blue-600' : 'bg-gray-700' ?>"><?= $i ?></a>
+                  <?php endfor; ?>
+                  <?php if ($current_page < $total_pages): ?>
+                    <a href="<?= buildPaginationUrl($current_page + 1) ?>" class="bg-gray-700 px-3 py-1 rounded text-white">&rarr;</a>
+                  <?php endif; ?>
                 </div>
                 <?php endif; ?>
               </div>
