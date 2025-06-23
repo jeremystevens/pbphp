@@ -75,7 +75,7 @@ $theme = $_COOKIE['theme'] ?? 'dark';
                     <div class="flex space-x-4">
                         <a href="/" class="hover:bg-blue-700 px-3 py-2 rounded">Home</a>
                         <a href="/?page=archive" class="hover:bg-blue-700 px-3 py-2 rounded">Archive</a>
-                        <a href="/?page=projects" class="text-blue-600 dark:text-blue-400 hover:underline">Projects</a>
+                        <a href="/?page=projects" class="px-3 py-2 text-sm font-medium text-white hover:text-blue-300 transition">Projects</a>
                         <a href="/?page=collections" class="hover:bg-blue-700 px-3 py-2 rounded">Collections</a>
                         <a href="following_feed.php" class="bg-blue-700 px-3 py-2 rounded">Feed</a>
                     </div>
