@@ -49,6 +49,7 @@ if (!$is_included): ?>
                     <a href="/?page=archive" class="hover:bg-blue-700 px-3 py-2 rounded">
                         <i class="fas fa-archive mr-2"></i>Archive
                     </a>
+                    <a href="/?page=projects" class="text-blue-600 dark:text-blue-400 hover:underline">Projects</a>
                     <?php if ($user_id): ?>
                         <a href="/?page=account" class="hover:bg-blue-700 px-3 py-2 rounded">
                             <i class="fas fa-crown mr-2"></i>Account
