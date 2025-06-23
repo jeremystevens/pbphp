@@ -6208,8 +6208,8 @@ plt.show()</code></pre>
               $total_count = $count_stmt->fetch()['total'];
 
               // Pagination
-              // Limit archive view to 5 pastes per page
-              $items_per_page = 5;
+              // Limit archive view to 15 pastes per page (3x5 grid)
+              $items_per_page = 15;
               $current_page = isset($_GET['p']) ? max(1, intval($_GET['p'])) : 1;
               $offset = ($current_page - 1) * $items_per_page;
               $total_pages = ceil($total_count / $items_per_page);
@@ -6282,168 +6282,56 @@ plt.show()</code></pre>
               </div>
               <?php endif; ?>
 
-              <div class="overflow-x-auto">
-                <table class="w-full table-auto">
-                  <thead>
-                    <tr class="bg-gray-100 dark:bg-gray-700">
-                      <th class="px-4 py-2 text-left">Title</th>
-                      <th class="px-4 py-2 text-left">Author</th>
-                      <th class="px-4 py-2 text-left">Language</th>
-                      <th class="px-4 py-2 text-left">Posted</th>
-                      <th class="px-4 py-2 text-left">Views</th>
-                      <th class="px-4 py-2 text-left">Comments</th>
-                      <th class="px-4 py-2 text-left">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <?php if (empty($archive_pastes)): ?>
-                      <tr>
-                        <td colspan="7" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
-                          <i class="fas fa-search text-4xl mb-4"></i>
-                          <p class="text-lg">No pastes found matching your criteria.</p>
-                          <p class="text-sm">Try adjusting your search filters or 
-                            <a href="?page=archive" class="text-blue-500 hover:text-blue-700">clear all filters</a>
-                          </p>
-                        </td>
-                      </tr>
-                    <?php else: ?>
-                      <?php foreach ($archive_pastes as $paste):
-                        $expires = $paste['expire_time'] ? date('Y-m-d H:i', $paste['expire_time']) : 'Never';
-                        $has_children = $paste['child_count'] > 0;
-                      ?>
-                    <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
-                        <td class="px-4 py-3">
-                          <div class="flex items-center gap-2">
-                            <?php if ($paste['is_fork']): ?>
-                              <i class="fas fa-code-branch text-purple-500" title="This is a fork"></i>
-                            <?php endif; ?>
-                            <div>
-                              <a href="?id=<?= $paste['id'] ?>" class="text-blue-500 hover:text-blue-700 font-medium">
-                                <?= htmlspecialchars($paste['title']) ?>
-                              </a>
-
-                              <!-- Tags display -->
-                              <?php if (!empty($paste['tags'])): ?>
-                                <div class="mt-1">
-                                  <?php foreach (array_slice(explode(',', $paste['tags']), 0, 3) as $tag): ?>
-                                    <span class="inline-block bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 text-xs px-2 py-1 rounded mr-1">
-                                      <?= htmlspecialchars(trim($tag)) ?>
-                                    </span>
-                                  <?php endforeach; ?>
-                                </div>
-                              <?php endif; ?>
-
-                              <?php if ($has_children): ?>
-                                <button onclick="toggleChildren(<?= $paste['id'] ?>)" 
-                                        class="mt-1 px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors">
-                                  <span id="toggle-text-<?= $paste['id'] ?>">Show Children (<?= $paste['child_count'] ?>)</span>
-                                </button>
-                              <?php endif; ?>
-                            </div>
-                          </div>
-                        </td>
-
-                        <td class="px-4 py-3">
-                          <div class="flex items-center gap-2">
-                            <?php if ($paste['username']): ?>
-                              <a href="?page=profile&username=<?= urlencode($paste['username']) ?>" class="text-blue-500 hover:text-blue-700">
-                                @<?= htmlspecialchars($paste['username']) ?>
-                              </a>
-                            <?php else: ?>
-                              <span class="text-gray-500">Anonymous</span>
-                            <?php endif; ?>
-                          </div>
-                        </td>
-
-                        <td class="px-4 py-3">
-                          <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm">
-                            <?= htmlspecialchars($paste['language']) ?>
-                          </span>
-                        </td>
-
-                        <td class="px-4 py-3">
-                          <div class="text-sm">
-                            <?= human_time_diff($paste['created_at']) ?>
-                            <?php if ($paste['expire_time']): ?>
-                              <div class="text-xs text-orange-500 mt-1" data-expires="<?= $paste['expire_time'] ?>">
-                                <i class="fas fa-clock"></i> <span class="countdown-timer">Calculating...</span>
-                              </div>
-                            <?php endif; ?>
-                          </div>
-                        </td>
-
-                        <td class="px-4 py-3 text-center text-sm text-gray-600 dark:text-gray-400">
-                          <i class="fas fa-eye mr-1 text-blue-400"></i><?= number_format($paste['views']) ?>
-                          <?php if ($paste['fork_count'] > 0): ?>
-                            <span class="ml-2">
-                              <i class="fas fa-code-branch"></i>
-                              <?= number_format($paste['fork_count']) ?>
-                            </span>
-                          <?php endif; ?>
-                        </td>
-                        <td class="px-4 py-3 text-center text-sm text-gray-600 dark:text-gray-400">
-                          <i class="fas fa-comment mr-1 text-gray-400"></i><?= number_format($paste['comment_count']) ?>
-                        </td>
-
-                        <td class="px-4 py-3">
-                          <div class="flex gap-1">
-                            <a href="?id=<?= $paste['id'] ?>" 
-                               class="px-2 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600 transition-colors">
-                              View
-                            </a>
-                            <a href="?id=<?= $paste['id'] ?>&raw=1" 
-                               target="_blank"
-                               class="px-2 py-1 bg-gray-500 text-white rounded text-xs hover:bg-gray-600 transition-colors">
-                              Raw
-                            </a>
-                          </div>
-                        </td>
-                      </tr>
-
-                      <!-- Hidden row for children -->
-                      <?php if ($has_children): ?>
-                      <tr id="children-<?= $paste['id'] ?>" class="hidden">
-                        <td colspan="7" class="px-0 py-0">
-                          <div class="bg-gray-50 dark:bg-gray-800 border-l-4 border-blue-500">
-                            <div id="children-content-<?= $paste['id'] ?>" class="p-4">
-                              <!-- Children will be loaded here via AJAX -->
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                      <?php endif; ?>
-                      <?php endforeach; ?>
-                    <?php endif; ?>
-                  </tbody>
-                </table>
-
+              <div>
+                <?php if (empty($archive_pastes)): ?>
+                  <div class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+                    <i class="fas fa-search text-4xl mb-4"></i>
+                    <p class="text-lg">No pastes found matching your criteria.</p>
+                    <p class="text-sm">Try adjusting your search filters or
+                      <a href="?page=archive" class="text-blue-500 hover:text-blue-700">clear all filters</a>
+                    </p>
+                  </div>
+                <?php else: ?>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <?php foreach ($archive_pastes as $paste): ?>
+                    <a href="?id=<?= $paste['id'] ?>" class="block rounded-md border border-gray-700 bg-gray-800 p-4 hover:shadow-lg hover:border-blue-500 transition duration-200" role="link" aria-label="View paste <?= htmlspecialchars($paste['title'] ?: 'Untitled') ?>">
+                      <div class="flex justify-between text-sm text-gray-400 mb-2">
+                        <span><?= htmlspecialchars($paste['language']) ?></span>
+                        <span><?= human_time_diff($paste['created_at']) ?></span>
+                      </div>
+                      <h2 class="text-white font-semibold text-lg truncate"><?= htmlspecialchars($paste['title'] ?: 'Untitled') ?></h2>
+                    </a>
+                  <?php endforeach; ?>
+                </div>
+                <?php endif; ?>
+              
                 <?php if ($total_pages > 1): ?>
                 <div class="mt-6 flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
                   <!-- Results info -->
                   <div class="text-sm text-gray-600 dark:text-gray-400">
-                    Showing <?= number_format(($current_page - 1) * $items_per_page + 1) ?> - 
-                    <?= number_format(min($current_page * $items_per_page, $total_count)) ?> 
+                    Showing <?= number_format(($current_page - 1) * $items_per_page + 1) ?> -
+                    <?= number_format(min($current_page * $items_per_page, $total_count)) ?>
                     of <?= number_format($total_count) ?> results
                   </div>
 
                   <!-- Pagination -->
                   <div class="flex space-x-2">
                     <?php if ($current_page > 1): ?>
-                      <a href="<?= buildPaginationUrl($current_page - 1) ?>" 
+                      <a href="<?= buildPaginationUrl($current_page - 1) ?>"
                          class="px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200 dark:hover:bg-gray-600">
                         <i class="fas fa-chevron-left mr-1"></i>Previous
                       </a>
                     <?php endif; ?>
 
                     <?php for ($i = max(1, $current_page - 2); $i <= min($total_pages, $current_page + 2); $i++): ?>
-                      <a href="<?= buildPaginationUrl($i) ?>" 
+                      <a href="<?= buildPaginationUrl($i) ?>"
                          class="px-4 py-2 rounded <?= $i === $current_page ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600' ?>">
                         <?= $i ?>
                       </a>
                     <?php endfor; ?>
 
                     <?php if ($current_page < $total_pages): ?>
-                      <a href="<?= buildPaginationUrl($current_page + 1) ?>" 
+                      <a href="<?= buildPaginationUrl($current_page + 1) ?>"
                          class="px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200 dark:hover:bg-gray-600">
                         Next<i class="fas fa-chevron-right ml-1"></i>
                       </a>
